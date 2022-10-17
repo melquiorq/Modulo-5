@@ -1,0 +1,63 @@
+-- Selecionando todos o elementos de uma tabela
+
+select * from `BigQuery.professores`
+
+-- Selecionando algumas colunas do banco da dados
+
+select professor_id, nome_completo from `BigQuery.professores`
+
+-- Selecionando dados que atendam uma determinada condição
+
+select * from `BigQuery.professores` where professor_id <3
+
+select professor_id, nome_completo from `BigQuery.professores` where professor_id <3
+
+-- Selecionando apenas uma quantidade de linhas. 
+select * from bigquery-public-data.iowa_liquor_sales.sales limit 5
+
+-- Selecionando apenas a coluna das cidades
+select city from bigquery-public-data.iowa_liquor_sales.sales
+
+-- Selecionando apenas a coluna cidades sem repetição
+
+select distinct city from bigquery-public-data.iowa_liquor_sales.sales
+
+-- Contar quantas lihas tem em um tabela
+select count(*) from bigquery-public-data.iowa_liquor_sales.sales
+
+-- Contar quantas cidade em uma tabela 
+select count(city) from bigquery-public-data.iowa_liquor_sales.sales
+
+-- Contar quantas cidade tem em uma tabela sem repetições de cidades
+select count(distinct city) from bigquery-public-data.iowa_liquor_sales.sales
+
+-- Calcular total em moedas de uma coluna 
+select sum(sale_dollars) from bigquery-public-data.iowa_liquor_sales.sales
+
+--Qual o maior valor de uma coluna
+select max(sale_dollars) from bigquery-public-data.iowa_liquor_sales.sales
+
+--Qual o maior valor de uma coluna
+select min (sale_dollars) from bigquery-public-data.iowa_liquor_sales.sales
+
+--Qual o maior valor de uma coluna maior que zero
+select min(sale_dollars) from bigquery-public-data.iowa_liquor_sales.sales where sale_dollars > 0
+
+--Ordenando a seleção desejada 
+select * from bigquery-public-data.iowa_liquor_sales.sales order by sale_dollars
+
+--Ordenando a seleção desejada de forma descendente
+select * from bigquery-public-data.iowa_liquor_sales.sales order by sale_dollars desc
+
+-- Buscando uma data mais recente 
+select * from bigquery-public-data.iowa_liquor_sales.sales order by date desc
+
+-- total de vendas agregadas por dia do menor dia para o maior
+select date, sum(sale_dollars) as total_vendido_dia from bigquery-public-data.iowa_liquor_sales.sales
+group by date
+order by date
+
+-- total de vendas agregadas por dia do menor dia para o maior
+select date, item_description, sum(sale_dollars) as total_vendido_dia from bigquery-public-data.iowa_liquor_sales.sales
+group by item_descripition
+order by date
