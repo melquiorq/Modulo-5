@@ -1,0 +1,51 @@
+-- 1 - Quantos itens distintos foram vendidos
+select count(distinct store_name) from bigquery-public-data.iowa_liquor_sales.sales
+
+--2 - Quantas lojas existem na base
+select count(distinct store_number) from bigquery-public-data.iowa_liquor_sales.sales
+
+--3 - Qual é a cidade que tem mais lojas
+select city, count(distinct store_number) as total_cidades from bigquery-public-data.iowa_liquor_sales.sales
+group by city
+order by total_cidades desc
+
+--4 - Qual municipio foi vendido mais itens
+select city, count(store_number) as total_cidades from bigquery-public-data.iowa_liquor_sales.sales
+group by city
+order by total_cidades desc
+limit 1
+
+--5 - Qual a cidade que mais vendeu em dolares
+select city, round(sum(sale_dollars),2) as total_venda_cidade from bigquery-public-data.iowa_liquor_sales.sales
+group by city
+order by total_venda_cidade desc
+limit 1
+
+--6 - Qual foi o dia que mais vendeu itens disitintos 
+select date, count(distinct item_number) as contagem_vendas from bigquery-public-data.iowa_liquor_sales.sales
+group by date
+order by contagem_vendas desc
+limit 1
+
+--7 - Monte o top 5 babidas (item_description) mais vendidas por Valor
+select item_description, round(sum(sale_dollars),2) as Valor_vendas_bebidas from bigquery-public-data.iowa_liquor_sales.sales
+group by item_description
+order by Valor_vendas_bebidas desc
+limit 5
+
+--8 - Monte o top 5 babidas (item_description) mais vendidas por volume em litros
+select item_description, round(sum(volume_sold_liters),2) as volume_vendas_bebidas from bigquery-public-data.iowa_liquor_sales.sales
+group by item_description
+order by volume_vendas_bebidas desc
+limit 5
+
+--9 - Quais são as 10 empresas (vendor_name) que mais lucram com a venda de babidas
+select vendor_name, round(sum(state_bottle_retail) - sum(state_bottle_cost),2) as lucro_vendas from bigquery-public-data.iowa_liquor_sales.sales
+group by vendor_name
+order by lucro_vendas desc
+limit 10
+
+-- 10 - Monte uma tabela ccom a quantidade de vendas distintas por dia
+select date, count(distinct item_description) as quantidade_vendida_dia from bigquery-public-data.iowa_liquor_sales.sales
+group by date
+order by quantidade_vendida_dia desc
