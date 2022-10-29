@@ -1,0 +1,91 @@
+-- Lista de Exercicios
+-- Vamos utilizar as tabelas do projeto the look_ecommerce, onde o caminho
+-- das tabelas estÃ£o em:
+-- tabela orders: 		bigquery-public-data.thelook_ecommerce.orders
+-- Tabela order_items: 		bigquery-public-data.thelook_ecommerce.order_items
+-- Tabela products: 		bigquery-public-data.thelook_ecommerce.products
+-- Tabela users: 		bigquery-public-data.thelook_ecommerce.users
+-- Tabela distribution_centers: bigquery-public-data.thelook_ecommerce.distribution_centers
+-- Tabela events: 		bigquery-public-data.thelook_ecommerce.events
+
+-- Exercicio 1
+-- Quantos centros de distribuiÃ§Ã£o distintos existem?
+--Tabela distribution_centers
+select count(name) from bigquery-public-data.thelook_ecommerce.distribution_centers
+
+-- Exercicio 2
+-- Quais os nomes dos 10 produtos que tem o menor custo?
+-- Tabela products
+select * from bigquery-public-data.thelook_ecommerce.products limit 10
+select name, cost from bigquery-public-data.thelook_ecommerce.products 
+order by cost
+limit 10
+
+-- Exercicio 3
+-- Quais os nomes dos10 produtos mais lucrativos?
+-- Tabela products
+select name, round(sum(retail_price - cost),2) as lucro_venda from bigquery-public-data.thelook_ecommerce.products
+group by name
+order by lucro_venda desc 
+limit 10
+
+-- Exercicio 4
+-- Qual categoria teve mais produtos vendidos?
+-- Tabela products
+select category, count(id) as venda_cat from bigquery-public-data.thelook_ecommerce.products
+group by category
+order by venda_cat desc
+limit 1
+
+Exercicio 5
+-- Quais as marcas que mais lucraram com as vendas?
+-- Tabela products
+select * from bigquery-public-data.thelook_ecommerce.products limit 5
+select brand, round(sum(retail_price) - sum(cost),2) as lucro_marca from bigquery-public-data.thelook_ecommerce.products
+group by brand
+order by lucro_marca desc 
+
+-- Exercicio 6
+-- Crie uma tabela com a quantidade de produtos devolvidos por cliente
+-- tabela orders
+select user_id, count(status) as retorno_itens from bigquery-public-data.thelook_ecommerce.orders where status = 'Returned'
+group by user_id
+order by retorno_itens desc
+
+-- Exercicio 7
+-- Qual publico que mais fez pedidos na loja? Feminino ou Masculino?
+-- tabela orders
+select gender, count(order_id) as pedido_genero from bigquery-public-data.thelook_ecommerce.orders
+group by gender 
+order by pedido_genero desc
+
+-- Exercicio 8
+-- Qual foi o dia que mais vendeu itens?
+-- tabela orders
+select created_at, sum(num_of_item) as itens_dia from bigquery-public-data.thelook_ecommerce.orders
+group by created_at
+order by itens_dia desc
+limit 1
+
+-- Exercicio 9
+-- Qual os paises que temos mais clientes?
+-- tabela users
+select * from bigquery-public-data.thelook_ecommerce.users limit 5
+select country, count(id) as clientes_pais from bigquery-public-data.thelook_ecommerce.users
+group by country
+order by clientes_pais desc
+
+-- Exercicio 10
+-- Monte uma tabela com os paises, as idades e a quantidade de pessoas com a mesma idade?
+-- tabela users
+select country, age as pais_idade, count(id) as cont_pais from bigquery-public-data.thelook_ecommerce.users 
+group by country, age
+order by country,age desc
+
+-- Desafio 1
+-- Monte uma tabela com os seguintes itens:
+-- order_id
+-- first name
+-- last_name
+-- total da compra (precisa criar essa variÃ¡vel)
+select * from bigquery-public-data.thelook_ecommerce.orders limit 5

@@ -1,0 +1,83 @@
+-- Desafio 1
+-- Monte uma tabela com os seguintes itens:
+-- order_id
+-- first name
+-- last_name
+-- total da compra (precisa criar essa variÃƒÂ¡vel) 
+
+-- APLICANDOS AS LIGAÃ‡Ã•ES
+---- TABELA A
+SELECT
+  order_id,
+  user_id,
+  sale_price
+FROM bigquery-public-data.thelook_ecommerce.order_items
+
+---- TABELA B
+SELECT
+  id,
+  first_name,
+  last_name
+FROM bigquery-public-data.thelook_ecommerce.users
+LIMIT 5
+
+----- LEFT JOIN A COM B
+SELECT
+  A.order_id,
+  A.user_id,
+  A.sale_price,
+  B.id,
+  B.first_name,
+  B.last_name
+FROM bigquery-public-data.thelook_ecommerce.order_items AS A
+LEFT JOIN bigquery-public-data.thelook_ecommerce.users AS B
+  ON A.user_id = B.id
+
+
+  --- OTIMIZANDO A CONSULTA
+SELECT
+  A.order_id,
+  B.first_name,
+  B.last_name,
+  A.sale_price
+FROM bigquery-public-data.thelook_ecommerce.order_items AS A
+LEFT JOIN bigquery-public-data.thelook_ecommerce.users AS B
+  ON A.user_id = B.id
+
+--- SUMARIZANDO
+SELECT
+  A.order_id,
+  B.first_name,
+  B.last_name,
+  ROUND(SUM(A.sale_price), 2) AS total_pedido
+FROM bigquery-public-data.thelook_ecommerce.order_items AS A
+LEFT JOIN bigquery-public-data.thelook_ecommerce.users AS B
+  ON A.user_id = B.id
+GROUP BY 1, 2, 3
+ORDER BY 1
+
+
+
+---- Exercicios
+--- Exercicio 1
+---Montar uma tabela com as seguintes informaÃ§Ãµes
+---order_id, gender, delivered_at, num_of_item, sale_price COM INNER JOIN
+
+SELECT 
+A.order_id,
+A.gender,
+A.delivered_at,
+A.num_of_item,
+ROUND(SUM(B.sale_price),2) AS TOTAL_PEDIDO
+FROM bigquery-public-data.thelook_ecommerce.orders AS A INNER JOIN bigquery-public-data.thelook_ecommerce.order_items AS B
+ON A.user_id = B.id
+group by 1,2,3,4
+order by 1
+
+
+-- Exercicio 2
+--- Construir a mesma tabela do Desafio mas utilizando o RIGHT JOIN
+
+--- Exercicios 3
+--- Montar uma tabela com as idades e com o maior valor de pedido para aquela respectiva idade
+

@@ -1,0 +1,16 @@
+1- Quais sÃ£o os centros de distribuição que deram mais lucro?
+
+2 - Quais paises mais devolveram itens?
+
+3 - Quantos produtos distintos em cada um dos centros de distribuiÃ§Ã£o alocam?
+
+4 - Quanto cada usuário já¡ gastou com pedidos? Lembrar de multiplicar o sale_price pelo num_of_item 
+
+5 - Monte uma tabela com as cidades e o tempo mÃ©dio de entrega
+
+6 - Verifique se todos os produtos disponÃ­veis nesta loja, já¡ foram vendido pelo menos uma vez? se nãoo, quais produtos ainda não foram vendidos?
+
+7 - Monte uma tabela com os paÃ­ses, o genÃªro e a departamento que mais sÃ£o comprados naquele respectivo pais 
+
+8 - Monte uma tabela com os usuarios, a cidade onde mora e qual seria o centro de distribuiÃ§Ã£o mais prÃ³ximo?
+Dica: Uma forma de fazer Ã© atravÃ©s do calculo de distÃ¢ncia euclidiana com a latitude e longitude
