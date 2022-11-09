@@ -1,0 +1,70 @@
+Lista de Exercicios 3
+
+Escolher um conjunto de dados e fazer uma anÃ¡lise a respeito do conteÃºdo.
+Utilize pelo menos 3 consultas (queries) para entender o conjunto de dados e
+explicar as anÃ¡lises.
+
+SugestÃµes de conjuntos de dados pÃºblicos:
+
+American Health Ranking
+bigquery-public-data.america_health_rankings.america_health_rankings
+
+Chicago Taxi Trips
+bigquery-public-data.chicago_taxi_trips.taxi_trips
+
+Google Trends
+bigquery-public-data.google_trends.international_top_rising_terms
+bigquery-public-data.google_trends.international_top_terms
+bigquery-public-data.google_trends.top_rising_terms
+bigquery-public-data.google_trends.top_terms
+
+IMDB
+bigquery-public-data.imdb.name_basics
+bigquery-public-data.imdb.reviews
+bigquery-public-data.imdb.title_akas
+bigquery-public-data.imdb.title_basics
+bigquery-public-data.imdb.title_crew
+bigquery-public-data.imdb.title_episode
+bigquery-public-data.imdb.title_principals
+bigquery-public-data.imdb.Title_ratings
+
+London - Fire Brigade Service Calls
+bigquery-public-data.london_fire_brigade.fire_brigade_service_calls
+
+San Francisco
+bigquery-public-data.san_francisco.311_service_requests
+bigquery-public-data.san_francisco.bikeshare_locations
+bigquery-public-data.san_francisco.bikeshare_status
+bigquery-public-data.san_francisco.bikeshare_trips
+bigquery-public-data.san_francisco.film_locations
+bigquery-public-data.san_francisco.sffd_service_calls
+bigquery-public-data.san_francisco.sfpd_incidents
+bigquery-public-data.san_francisco.street_trees
+
+
+-- 1) QUAL O ANO COM MAIOR NUMERO DE LANÇAMENTOS 
+SELECT 
+release_year,
+COUNT(release_year) AS Total_lancamentos
+FROM bigquery-public-data.san_francisco.film_locations
+GROUP BY release_year
+ORDER BY Total_lancamentos DESC
+
+--2) QUAL O DIRETOR COM MAIOR NUMERO DE FILMES
+SELECT 
+upper(director) AS Diretor_Name,
+count(upper(director)) AS Total_diretor
+FROM bigquery-public-data.san_francisco.film_locations
+GROUP BY Diretor_Name
+ORDER BY Total_diretor DESC
+
+--3) QUAL O ATOR COM MAIOR NUMERO DE FILMES
+SELECT 
+upper(actor_1) AS Ator_Name,
+count(upper(actor_1)) AS Total_ator
+FROM bigquery-public-data.san_francisco.film_locations
+GROUP BY Ator_Name
+ORDER BY Total_ator DESC
+
+
+
