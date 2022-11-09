@@ -9,7 +9,7 @@
 -- Tabela distribution_centers: bigquery-public-data.thelook_ecommerce.distribution_centers
 -- Tabela events: 		  bigquery-public-data.thelook_ecommerce.events
 
-1- Quais sÃ£o os centros de distribuição que deram mais lucro?
+1- Quais sÃ£o os centros de distribuição que deram mais lucro? teste
 
 2 - Quais paises mais devolveram itens?
 
