@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 -- tabela orders: 		bigquery-public-data.thelook_ecommerce.orders
 -- Tabela order_items: 		bigquery-public-data.thelook_ecommerce.order_items
 -- Tabela products: 		bigquery-public-data.thelook_ecommerce.products
@@ -208,3 +209,215 @@ bigquery-public-data.iowa_liquor_sales.sales
 
 
 
+=======
+-- tabela orders: 		bigquery-public-data.thelook_ecommerce.orders
+-- Tabela order_items: 		bigquery-public-data.thelook_ecommerce.order_items
+-- Tabela products: 		bigquery-public-data.thelook_ecommerce.products
+-- Tabela users: 		bigquery-public-data.thelook_ecommerce.users
+-- Tabela distribution_centers: bigquery-public-data.thelook_ecommerce.distribution_centers
+-- Tabela events: 		bigquery-public-data.thelook_ecommerce.events
+
+
+-- SUB QUERIES
+-- Ao invÃ©s de criar tabelas auxiliares ou intermediarias, vamos fazer tudo numa consulta sÃ³
+
+SELECT *
+FROM bigquery-public-data.thelook_ecommerce.orders
+LIMIT 5
+
+SELECT *
+FROM bigquery-public-data.thelook_ecommerce.order_items
+LIMIT 5
+
+-- Trazer as informaÃ§Ãµes sobre order_id, genero e valor da venda (num_of_item * sale_price)
+SELECT
+  A.order_id,
+  B.gender,
+  ROUND(A.sale_price*B.num_of_item, 2) AS total_venda
+FROM bigquery-public-data.thelook_ecommerce.order_items AS A
+LEFT JOIN (SELECT
+             order_id,
+             gender,
+             num_of_item
+           FROM bigquery-public-data.thelook_ecommerce.orders) AS B
+  ON A.order_id = B.order_id
+ORDER BY 1
+
+
+-- MANIPULAÃ‡Ã‚O DE DATAS
+SELECT created_at
+FROM bigquery-public-data.thelook_ecommerce.orders
+LIMIT 5
+
+-- Vamos transformar a data para um modelo padrÃ£o do bigquery
+SELECT DATE(created_at) as created_at
+FROM bigquery-public-data.thelook_ecommerce.orders
+LIMIT 5
+
+-- Customizando a data
+--https://cloud.google.com/bigquery/docs/reference/standard-sql/format-elements
+SELECT FORMAT_DATE("%d/%m/%y", created_at) as created_at
+FROM bigquery-public-data.thelook_ecommerce.orders
+LIMIT 5
+
+SELECT FORMAT_DATE("%d/%m/%Y", created_at) as created_at
+FROM bigquery-public-data.thelook_ecommerce.orders
+LIMIT 5
+
+SELECT FORMAT_DATE("%d%B%Y", created_at) as created_at
+FROM bigquery-public-data.thelook_ecommerce.orders
+LIMIT 5
+
+SELECT FORMAT_DATE("%d%b%Y", created_at) as created_at
+FROM bigquery-public-data.thelook_ecommerce.orders
+LIMIT 5
+
+SELECT FORMAT_DATE("%d-%b-%Y", created_at) as created_at
+FROM bigquery-public-data.thelook_ecommerce.orders
+LIMIT 5
+
+
+-- Extraindo informaÃ§Ãµes das Datas
+-- FunÃ§Ã£o EXTRACT
+--https://cloud.google.com/bigquery/docs/reference/standard-sql/date_functions
+
+SELECT
+  created_at,
+  EXTRACT(DAY FROM created_at) AS dia,
+  EXTRACT(MONTH FROM created_at) AS mes,
+  EXTRACT(YEAR FROM created_at) AS ano,
+  EXTRACT(DAYOFWEEK FROM created_at) AS dia_semana,
+  EXTRACT(WEEK FROM created_At) AS semana
+FROM bigquery-public-data.thelook_ecommerce.orders
+LIMIT 5
+
+-- Data de Hoje
+SELECT CURRENT_DATE() AS hoje
+
+
+-- CONDICIONAIS (CASE WHEN)
+SELECT DISTINCT status
+FROM bigquery-public-data.thelook_ecommerce.orders
+
+CREATE OR REPLACE TABLE ADA.temp1 AS (
+SELECT
+  order_id,
+  delivered_at,
+  shipped_at,
+  CASE WHEN status = 'Complete' THEN EXTRACT(DAY FROM DATE(delivered_at) - DATE(shipped_at)) ELSE EXTRACT(DAY FROM CURRENT_DATE() - DATE(shipped_at)) END AS dias_entrega
+FROM bigquery-public-data.thelook_ecommerce.orders)
+
+
+SELECT
+  order_id,
+  dias_entrega,
+  CASE WHEN dias_entrega <= 3 THEN '01 - AtÃ© 3 dias'
+       WHEN dias_entrega <= 5 THEN '02 - 3-5 dias'
+       WHEN dias_entrega <= 7 THEN '03 - 5-7 dias'
+       WHEN dias_entrega <= 15 THEN '04 - 7-15 dias'
+       WHEN dias_entrega <= 30 THEN '05 - 15-30 dias'
+       WHEN dias_entrega <= 60 THEN '06 - 30-60 dias' ELSE '07 - Acima de 60 dias' END AS faixa_entregas
+FROM ADA.temp1
+
+SELECT
+  faixa_entregas,
+  COUNT(order_id) as qntde
+FROM (SELECT
+      order_id,
+      dias_entrega,
+      CASE WHEN dias_entrega <= 3 THEN '01 - AtÃ© 3 dias'
+           WHEN dias_entrega <= 5 THEN '02 - 3-5 dias'
+           WHEN dias_entrega <= 7 THEN '03 - 5-7 dias'
+           WHEN dias_entrega <= 15 THEN '04 - 7-15 dias'
+           WHEN dias_entrega <= 30 THEN '05 - 15-30 dias'
+           WHEN dias_entrega <= 60 THEN '06 - 30-60 dias' ELSE '07 - Acima de 60 dias' END AS faixa_entregas
+    FROM ADA.temp1)
+GROUP BY 1
+ORDER BY 1
+
+
+-- MANIPULAÃ‡Ã£O DE TEXTOS
+-- MINUSCULAS
+SELECT ('BOM DIA TURMA COMO ESTAO'),
+       LOWER('BOM DIA TURMA COMO ESTAO')
+
+-- MAIUSCULAS
+SELECT ('boa noite turma e bom fim de semana'),
+       UPPER('boa noite turma e bom fim de semana')
+
+-- FunÃ§Ã£o LIKE
+-- Exemplo que dÃ¡ false
+SELECT 'SANDRO SAORIN' LIKE 'SANDRO'
+
+-- Exemplo que da true
+SELECT 'SANDRO SAORIN' LIKE 'SANDRO SAORIN'
+
+
+-- %: valida trecho de palavras
+-- % a direita = pode ter mais coisa a direita da palavra
+SELECT 'SANDRO SAORIN' LIKE 'SANDRO%'
+
+-- % a esquerda = pode ter mais coisa a esquerda da palavra
+SELECT 'SANDRO SAORIN' LIKE '%SAORIN'
+
+-- % em ambos os lados: valida se existe aquele trecho dentro da string
+SELECT 'SANDRO SAORIN DA SILVA' LIKE '%DA%'
+
+SELECT 'SANDRO SAORIN' LIKE '%E%'
+
+
+-- CONCAT
+SELECT CONCAT("SANDRO", "SAORIN", "DA", "SILVA")
+
+SELECT CONCAT("SANDRO ", "SAORIN ", "DA ", "SILVA")
+
+
+
+--SUBSTRING (SUBSTR)
+-- COMO FUNCIONA SUBSTR(PALAVRA, POSIÃ‡ÃƒO DE INICIO NA PALAVRA, E O COMPRIMENTO QUE VAI PERCORRER)
+SELECT SUBSTR("SANDRO SAORIN DA SILVA", 1, 6)
+
+SELECT SUBSTR("SANDRO SAORIN DA SILVA", 4, 12)
+
+bigquery-public-data.iowa_liquor_sales.sales
+
+
+-- Exercicios
+-- Exercicio 1 : Qual  a cidade que mais tem lojas? Corrigir o nome das cidades utilizando lower
+	SELECT
+	LOWER(city),
+	COUNT(city) as contagem from bigquery-public-data.iowa_liquor_sales.sales where city IS NOT NULL
+	GROUP BY city
+	ORDER BY contagem DESC
+
+
+-- Exercicio 2 : Qual a cidade mais vendeu em dolares? Corrigir o nome das cidade utilizando o UPPER
+	SELECT
+	UPPER(city),
+	ROUND(SUM(sale_dollars),2) AS TOTAL_DOLAR
+	FROM bigquery-public-data.iowa_liquor_sales.sales WHERE city IS NOT NULL
+	GROUP BY city
+	ORDER BY TOTAL_DOLAR DESC
+
+-- Exercicio 3: Quantas cidades distintas tem o termo MO no nome?
+	
+	SELECT 
+	DISTINCT UPPER(city),
+	COUNT(city) AS TOTAL_MO
+	FROM bigquery-public-data.iowa_liquor_sales.sales WHERE city LIKE '%MO%'
+	GROUP BY city
+	ORDER BY TOTAL_MO DESC
+
+
+-- Exercicio 4: Quantos municipios distintas comeÃ§am com a letra W? Ordene os nomes
+	SELECT 
+	DISTINCT UPPER(city),
+	FROM bigquery-public-data.iowa_liquor_sales.sales WHERE city LIKE 'W%'
+	GROUP BY city
+
+
+-- Exercicio 5: Calcule o total de vendas por semana de cada mÃªs para cada respectivo ano
+
+
+
+>>>>>>> aa18ea64a5ca0adf66be2a8c1c559a7551d25cbe
