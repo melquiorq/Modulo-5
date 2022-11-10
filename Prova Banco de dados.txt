@@ -1,0 +1,47 @@
+
+-- tabela orders:         bigquery-public-data.thelook_ecommerce.orders
+-- Tabela order_items:         bigquery-public-data.thelook_ecommerce.order_items
+-- Tabela products:         bigquery-public-data.thelook_ecommerce.products
+-- Tabela users:         bigquery-public-data.thelook_ecommerce.users
+-- Tabela distribution_centers: bigquery-public-data.thelook_ecommerce.distribution_centers
+-- Tabela events:         bigquery-public-data.thelook_ecommerce.events
+
+
+1-Monte a consulta que retorne a tabela com o top 10 países que mais entregaram pedidos.
+
+Resposta
+SELECT A.country,
+SUM(B.num_of_item) AS Total_Entregas
+FROM bigquery-public-data.thelook_ecommerce.users AS A 
+LEFT JOIN bigquery-public-data.thelook_ecommerce.orders AS B 
+ON A.id = B.user_id 
+WHERE delivered_at IS NOT NULL
+GROUP BY 1 
+ORDER BY Total_Entregas DESC 
+LIMIT 10
+
+
+2 - Monte a consulta que retorne a tabela com o país e o tempo médio de retorno dos pedidos.
+
+Resposta
+SELECT A.country,
+EXTRACT(DAY FROM DATE(B.returned_at)-DATE(B.created_at)) AS Tempo_de_retorno
+FROM bigquery-public-data.thelook_ecommerce.users AS A
+LEFT JOIN bigquery-public-data.thelook_ecommerce.orders AS B
+ON A.id = B.user_id
+WHERE B.returned_at IS NOT NULL
+GROUP BY 1,2
+ORDER BY Tempo_de_retorno DESC
+
+3-Monte uma tabela que retorne as 5 cidades que mais gastaram com produtos. Utilize apenas o sale_price para definir o gasto.
+
+Resposta
+SELECT
+A.city, 
+ROUND(SUM(B.sale_price),2) AS Valor_de_Venda
+FROM bigquery-public-data.thelook_ecommerce.users AS A
+LEFT JOIN bigquery-public-data.thelook_ecommerce.order_items AS B 
+ON A.id = B.user_id 
+GROUP BY 1 
+ORDER BY Valor_de_Venda DESC 
+LIMIT 5
